@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Weather App</string>
+    <string name="app_name">OpenWeather App</string>
+    <string name="centigrade">Centigrade</string>
+    <string name="farenheit">Farenheit</string>
+    <string name="location">Location</string>
+    <string name="API_KEY">d8efe8af2f20910c27f0eac1561ea0f7</string>
 </resources>
