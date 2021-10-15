@@ -8,13 +8,13 @@ public class Weather {
     String timezone;
     long timezoneOffset;
     WeatherData current;
-    List<WeatherData> hourly;
-    List<WeatherData> daily;
+    List<Hourly> hourly;
+    List<Daily> daily;
 
     public Weather() {
     }
 
-    public Weather(double lat, double lon, String timezone, long timezoneOffset, WeatherData current, List<WeatherData> hourly, List<WeatherData> daily) {
+    public Weather(double lat, double lon, String timezone, long timezoneOffset, WeatherData current, List<Hourly> hourly, List<Daily> daily) {
         this.lat = lat;
         this.lon = lon;
         this.timezone = timezone;
@@ -64,19 +64,19 @@ public class Weather {
         this.current = current;
     }
 
-    public List<WeatherData> getHourly() {
+    public List<Hourly> getHourly() {
         return hourly;
     }
 
-    public void setHourly(List<WeatherData> hourly) {
+    public void setHourly(List<Hourly> hourly) {
         this.hourly = hourly;
     }
 
-    public List<WeatherData> getDaily() {
+    public List<Daily> getDaily() {
         return daily;
     }
 
-    public void setDaily(List<WeatherData> daily) {
+    public void setDaily(List<Daily> daily) {
         this.daily = daily;
     }
 

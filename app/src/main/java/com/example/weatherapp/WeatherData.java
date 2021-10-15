@@ -11,7 +11,7 @@ public class WeatherData {
     double pressure;
     double humidity;
     double dewPoint;
-    int uvi;
+    double uvi;
     int clouds;
     long visibility;
     double windSpeed;
@@ -21,7 +21,7 @@ public class WeatherData {
     public WeatherData() {
     }
 
-    public WeatherData(long dt, long sunrise, long sunset, double temp, double feelsLike, double pressure, double humidity, double dewPoint, int uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather) {
+    public WeatherData(long dt, long sunrise, long sunset, double temp, double feelsLike, double pressure, double humidity, double dewPoint, double uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather) {
         this.dt = dt;
         this.sunrise = sunrise;
         this.sunset = sunset;
@@ -102,11 +102,11 @@ public class WeatherData {
         this.dewPoint = dewPoint;
     }
 
-    public int getUvi() {
+    public double getUvi() {
         return uvi;
     }
 
-    public void setUvi(int uvi) {
+    public void setUvi(double uvi) {
         this.uvi = uvi;
     }
 

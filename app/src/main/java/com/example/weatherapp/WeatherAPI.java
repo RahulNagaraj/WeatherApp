@@ -82,7 +82,6 @@ public class WeatherAPI implements Runnable {
             return;
         }
 
-//        final ArrayList<Country> countryList = parseJSON(s);
         final Weather weatherData = parseJSON(s);
         mainActivity.runOnUiThread(() -> {
             if (weatherData != null)
@@ -100,35 +99,81 @@ public class WeatherAPI implements Runnable {
             double lon = jsonObject.getDouble("lon");
             String timezone = jsonObject.getString("timezone");
             long timezoneOffset = jsonObject.getLong("timezone_offset");
-            JSONObject currentObj = jsonObject.getJSONObject("current");
-            JSONArray currentWeatherJsonArray = jsonObject.getJSONObject("current").getJSONArray("weather");
-            List<WeatherInfo> currentWeatherInfo = new ArrayList<>();
-            if (currentWeatherJsonArray.length() > 0) {
-                JSONObject currentWeather = currentWeatherJsonArray.getJSONObject(0);
-                WeatherInfo weatherInfo = new WeatherInfo(
-                        currentWeather.getInt("id"),
-                        currentWeather.getString("main"),
-                        currentWeather.getString("description"),
-                        currentWeather.getString("icon")
+            WeatherData current = null;
+            List<Hourly> hourly = new ArrayList<>();
+            List<Daily> daily = new ArrayList<>();
+
+            if (jsonObject.has("current")) {
+                JSONObject currentObj = jsonObject.getJSONObject("current");
+                JSONArray currentWeatherJsonArray = currentObj.getJSONArray("weather");
+
+                List<WeatherInfo> currentWeatherInfo = new ArrayList<>();
+                if (currentWeatherJsonArray.length() > 0) {
+                    JSONObject currentWeather = currentWeatherJsonArray.getJSONObject(0);
+                    WeatherInfo weatherInfo = new WeatherInfo(
+                            currentWeather.getInt("id"),
+                            currentWeather.getString("main"),
+                            currentWeather.getString("description"),
+                            currentWeather.getString("icon")
+                    );
+                    currentWeatherInfo.add(weatherInfo);
+                }
+
+                current = new WeatherData(
+                        currentObj.getLong("dt"),
+                        currentObj.getLong("sunrise"),
+                        currentObj.getLong("sunset"),
+                        currentObj.getDouble("temp"),
+                        currentObj.getDouble("feels_like"),
+                        currentObj.getDouble("pressure"),
+                        currentObj.getDouble("humidity"),
+                        currentObj.getDouble("dew_point"),
+                        currentObj.getInt("uvi"),
+                        currentObj.getInt("clouds"),
+                        currentObj.getLong("visibility"),
+                        currentObj.getDouble("wind_speed"),
+                        currentObj.getDouble("wind_deg"),
+                        currentWeatherInfo
                 );
-                currentWeatherInfo.add(weatherInfo);
             }
-            WeatherData current = new WeatherData(
-                    currentObj.getLong("dt"),
-                    currentObj.getLong("sunrise"),
-                    currentObj.getLong("sunset"),
-                    currentObj.getDouble("temp"),
-                    currentObj.getDouble("feels_like"),
-                    currentObj.getDouble("pressure"),
-                    currentObj.getDouble("humidity"),
-                    currentObj.getDouble("dew_point"),
-                    currentObj.getInt("uvi"),
-                    currentObj.getInt("clouds"),
-                    currentObj.getLong("visibility"),
-                    currentObj.getDouble("wind_speed"),
-                    currentObj.getDouble("wind_deg"),
-                    currentWeatherInfo
-            );
+
+            if (jsonObject.has("hourly")) {
+                JSONArray hourlyJsonArray = jsonObject.getJSONArray("hourly");
+
+                for (int i = 0; i < hourlyJsonArray.length(); i++) {
+                    JSONObject jo = hourlyJsonArray.getJSONObject(i);
+                    JSONArray hourlyWeatherJsonArray = jo.getJSONArray("weather");
+
+                    List<WeatherInfo> hourlyWeatherInfo = new ArrayList<>();
+                    if (hourlyWeatherJsonArray.length() > 0) {
+                        JSONObject hourlyWeather = hourlyWeatherJsonArray.getJSONObject(0);
+                        WeatherInfo weatherInfo = new WeatherInfo(
+                                hourlyWeather.getInt("id"),
+                                hourlyWeather.getString("main"),
+                                hourlyWeather.getString("description"),
+                                hourlyWeather.getString("icon")
+                        );
+                        hourlyWeatherInfo.add(weatherInfo);
+                    }
+
+                    Hourly h = new Hourly(
+                            jo.getLong("dt"),
+                            jo.getDouble("temp"),
+                            hourlyWeatherInfo,
+                            jo.getDouble("pop")
+                    );
+
+                    hourly.add(i, h);
+                }
+            }
+
+            if (jsonObject.has("daily")) {
+
+            }
+
+
+
+
 
             weather = new Weather(
                 lat,
@@ -136,8 +181,8 @@ public class WeatherAPI implements Runnable {
                 timezone,
                 timezoneOffset,
                 current,
-                new ArrayList<>(),
-                new ArrayList<>()
+                hourly,
+                daily
             );
 
             return weather;
