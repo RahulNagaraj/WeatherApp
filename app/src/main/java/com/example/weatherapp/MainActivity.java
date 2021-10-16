@@ -121,11 +121,19 @@ public class MainActivity extends AppCompatActivity {
             item.setVisible(false);
             f.setVisible(true);
             unit = "imperial";
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, unit);
+            new Thread(weatherAPI).start();
+
             return true;
         } else if (item.getItemId() == R.id.unit_f) {
             item.setVisible(false);
             c.setVisible(true);
             unit = "metric";
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, unit);
+            new Thread(weatherAPI).start();
+
             return true;
         }
         return false;
