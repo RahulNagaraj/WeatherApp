@@ -1,17 +1,17 @@
 package com.example.weatherapp;
 
 public class Temperature {
-    double day;
-    double min;
-    double max;
-    double night;
-    double eve;
-    double morn;
+    int day;
+    int min;
+    int max;
+    int night;
+    int eve;
+    int morn;
 
     public Temperature() {
     }
 
-    public Temperature(double day, double min, double max, double night, double eve, double morn) {
+    public Temperature(int day, int min, int max, int night, int eve, int morn) {
         this.day = day;
         this.min = min;
         this.max = max;
@@ -20,51 +20,51 @@ public class Temperature {
         this.morn = morn;
     }
 
-    public double getDay() {
+    public int getDay() {
         return day;
     }
 
-    public void setDay(double day) {
+    public void setDay(int day) {
         this.day = day;
     }
 
-    public double getMin() {
+    public int getMin() {
         return min;
     }
 
-    public void setMin(double min) {
+    public void setMin(int min) {
         this.min = min;
     }
 
-    public double getMax() {
+    public int getMax() {
         return max;
     }
 
-    public void setMax(double max) {
+    public void setMax(int max) {
         this.max = max;
     }
 
-    public double getNight() {
+    public int getNight() {
         return night;
     }
 
-    public void setNight(double night) {
+    public void setNight(int night) {
         this.night = night;
     }
 
-    public double getEve() {
+    public int getEve() {
         return eve;
     }
 
-    public void setEve(double eve) {
+    public void setEve(int eve) {
         this.eve = eve;
     }
 
-    public double getMorn() {
+    public int getMorn() {
         return morn;
     }
 
-    public void setMorn(double morn) {
+    public void setMorn(int morn) {
         this.morn = morn;
     }
 

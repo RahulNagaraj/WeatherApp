@@ -2,26 +2,26 @@ package com.example.weatherapp;
 
 import java.util.List;
 
-public class WeatherData {
+public class Current {
     long dt;
     long sunrise;
     long sunset;
-    double temp;
-    double feelsLike;
-    double pressure;
-    double humidity;
-    double dewPoint;
-    double uvi;
+    int temp;
+    int feelsLike;
+    int pressure;
+    int humidity;
+    int dewPoint;
+    int uvi;
     int clouds;
     long visibility;
     double windSpeed;
     double windDeg;
     List<WeatherInfo> weather;
 
-    public WeatherData() {
+    public Current() {
     }
 
-    public WeatherData(long dt, long sunrise, long sunset, double temp, double feelsLike, double pressure, double humidity, double dewPoint, double uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather) {
+    public Current(long dt, long sunrise, long sunset, int temp, int feelsLike, int pressure, int humidity, int dewPoint, int uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather) {
         this.dt = dt;
         this.sunrise = sunrise;
         this.sunset = sunset;
@@ -62,51 +62,51 @@ public class WeatherData {
         this.sunset = sunset;
     }
 
-    public double getTemp() {
+    public int getTemp() {
         return temp;
     }
 
-    public void setTemp(double temp) {
+    public void setTemp(int temp) {
         this.temp = temp;
     }
 
-    public double getFeelsLike() {
+    public int getFeelsLike() {
         return feelsLike;
     }
 
-    public void setFeelsLike(double feelsLike) {
+    public void setFeelsLike(int feelsLike) {
         this.feelsLike = feelsLike;
     }
 
-    public double getPressure() {
+    public int getPressure() {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
+    public void setPressure(int pressure) {
         this.pressure = pressure;
     }
 
-    public double getHumidity() {
+    public int getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(int humidity) {
         this.humidity = humidity;
     }
 
-    public double getDewPoint() {
+    public int getDewPoint() {
         return dewPoint;
     }
 
-    public void setDewPoint(double dewPoint) {
+    public void setDewPoint(int dewPoint) {
         this.dewPoint = dewPoint;
     }
 
-    public double getUvi() {
+    public int getUvi() {
         return uvi;
     }
 
-    public void setUvi(double uvi) {
+    public void setUvi(int uvi) {
         this.uvi = uvi;
     }
 

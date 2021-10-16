@@ -1,8 +1,11 @@
 package com.example.weatherapp;
 
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,10 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class WeatherAPI implements Runnable {
 
@@ -25,7 +25,7 @@ public class WeatherAPI implements Runnable {
     private String unit;
     private final String KEY = "d8efe8af2f20910c27f0eac1561ea0f7";
 
-    private String DATA_URL = "https://api.openweathermap.org/data/2.5/onecall?lat=41.8675766&lon=-87.616232&units=metric&lang=en&exclude=minutely&appid=" + KEY;
+    private String DATA_URL;
     private static final String TAG = "WeatherAPI";
 
     public WeatherAPI() {
@@ -34,8 +34,10 @@ public class WeatherAPI implements Runnable {
     public WeatherAPI(MainActivity mainActivity, String unit) {
         this.mainActivity = mainActivity;
         this.unit = unit;
+        DATA_URL = "https://api.openweathermap.org/data/2.5/onecall?lat=41.8675766&lon=-87.616232&units="+ unit +"&lang=en&exclude=minutely&appid=" + KEY;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void run() {
         Log.d(TAG, "run: URL " + DATA_URL);
@@ -74,6 +76,7 @@ public class WeatherAPI implements Runnable {
         handleResults(sb.toString());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void handleResults(String s) {
 
         if (s == null) {
@@ -86,7 +89,7 @@ public class WeatherAPI implements Runnable {
         mainActivity.runOnUiThread(() -> {
             if (weatherData != null)
                 Toast.makeText(mainActivity, "Loaded " + weatherData.getLat() + ", " + weatherData.getLon() + " - " + weatherData.getTimezone(), Toast.LENGTH_LONG).show();
-//            mainActivity.updateData(countryList);
+            mainActivity.updateData(weatherData);
         });
     }
 
@@ -99,7 +102,7 @@ public class WeatherAPI implements Runnable {
             double lon = jsonObject.getDouble("lon");
             String timezone = jsonObject.getString("timezone");
             long timezoneOffset = jsonObject.getLong("timezone_offset");
-            WeatherData current = null;
+            Current current = null;
             List<Hourly> hourly = new ArrayList<>();
             List<Daily> daily = new ArrayList<>();
 
@@ -119,15 +122,15 @@ public class WeatherAPI implements Runnable {
                     currentWeatherInfo.add(weatherInfo);
                 }
 
-                current = new WeatherData(
+                current = new Current(
                         currentObj.getLong("dt"),
                         currentObj.getLong("sunrise"),
                         currentObj.getLong("sunset"),
-                        currentObj.getDouble("temp"),
-                        currentObj.getDouble("feels_like"),
-                        currentObj.getDouble("pressure"),
-                        currentObj.getDouble("humidity"),
-                        currentObj.getDouble("dew_point"),
+                        currentObj.getInt("temp"),
+                        currentObj.getInt("feels_like"),
+                        currentObj.getInt("pressure"),
+                        currentObj.getInt("humidity"),
+                        currentObj.getInt("dew_point"),
                         currentObj.getInt("uvi"),
                         currentObj.getInt("clouds"),
                         currentObj.getLong("visibility"),
@@ -158,7 +161,7 @@ public class WeatherAPI implements Runnable {
 
                     Hourly h = new Hourly(
                             jo.getLong("dt"),
-                            jo.getDouble("temp"),
+                            jo.getInt("temp"),
                             hourlyWeatherInfo,
                             jo.getDouble("pop")
                     );
@@ -168,12 +171,50 @@ public class WeatherAPI implements Runnable {
             }
 
             if (jsonObject.has("daily")) {
+                JSONArray dailyJsonArray = jsonObject.getJSONArray("daily");
 
+                for (int i = 0; i < dailyJsonArray.length(); i++) {
+                    JSONObject jo = dailyJsonArray.getJSONObject(i);
+                    JSONArray dailyWeatherJsonArray = jo.getJSONArray("weather");
+
+                    List<WeatherInfo> dailyWeatherInfo = new ArrayList<>();
+                    if (dailyWeatherJsonArray.length() > 0) {
+                        JSONObject dailyWeather = dailyWeatherJsonArray.getJSONObject(0);
+                        WeatherInfo weatherInfo = new WeatherInfo(
+                                dailyWeather.getInt("id"),
+                                dailyWeather.getString("main"),
+                                dailyWeather.getString("description"),
+                                dailyWeather.getString("icon")
+                        );
+                        dailyWeatherInfo.add(weatherInfo);
+                    }
+
+
+                    Temperature temperature = new Temperature();
+
+                    if (jo.has("temp")) {
+                        JSONObject j = jo.getJSONObject("temp");
+                        temperature = new Temperature(
+                                j.getInt("day"),
+                                j.getInt("min"),
+                                j.getInt("max"),
+                                j.getInt("night"),
+                                j.getInt("eve"),
+                                j.getInt("morn")
+                        );
+                    }
+
+                    Daily h = new Daily(
+                            jo.getLong("dt"),
+                            temperature,
+                            dailyWeatherInfo,
+                            jo.getInt("pop"),
+                            jo.getInt("uvi")
+                    );
+
+                    daily.add(i, h);
+                }
             }
-
-
-
-
 
             weather = new Weather(
                 lat,

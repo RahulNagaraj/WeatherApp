@@ -7,14 +7,14 @@ public class Weather {
     double lon;
     String timezone;
     long timezoneOffset;
-    WeatherData current;
+    Current current;
     List<Hourly> hourly;
     List<Daily> daily;
 
     public Weather() {
     }
 
-    public Weather(double lat, double lon, String timezone, long timezoneOffset, WeatherData current, List<Hourly> hourly, List<Daily> daily) {
+    public Weather(double lat, double lon, String timezone, long timezoneOffset, Current current, List<Hourly> hourly, List<Daily> daily) {
         this.lat = lat;
         this.lon = lon;
         this.timezone = timezone;
@@ -56,11 +56,11 @@ public class Weather {
         this.timezoneOffset = timezoneOffset;
     }
 
-    public WeatherData getCurrent() {
+    public Current getCurrent() {
         return current;
     }
 
-    public void setCurrent(WeatherData current) {
+    public void setCurrent(Current current) {
         this.current = current;
     }
 

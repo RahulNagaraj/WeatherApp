@@ -6,13 +6,13 @@ public class Daily {
     long dt;
     Temperature temp;
     List<WeatherInfo> weather;
-    int pop;
-    double uvi;
+    double pop;
+    int uvi;
 
     public Daily() {
     }
 
-    public Daily(long dt, Temperature temp, List<WeatherInfo> weather, int pop, double uvi) {
+    public Daily(long dt, Temperature temp, List<WeatherInfo> weather, double pop, int uvi) {
         this.dt = dt;
         this.temp = temp;
         this.weather = weather;
@@ -44,19 +44,19 @@ public class Daily {
         this.weather = weather;
     }
 
-    public int getPop() {
+    public double getPop() {
         return pop;
     }
 
-    public void setPop(int pop) {
+    public void setPop(double pop) {
         this.pop = pop;
     }
 
-    public double getUvi() {
+    public int getUvi() {
         return uvi;
     }
 
-    public void setUvi(double uvi) {
+    public void setUvi(int uvi) {
         this.uvi = uvi;
     }
 }

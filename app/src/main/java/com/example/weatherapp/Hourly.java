@@ -4,14 +4,14 @@ import java.util.List;
 
 public class Hourly {
     long dt;
-    double temp;
+    int temp;
     List<WeatherInfo> weather;
     double pop;
 
     public Hourly() {
     }
 
-    public Hourly(long dt, double temp, List<WeatherInfo> weather, double pop) {
+    public Hourly(long dt, int temp, List<WeatherInfo> weather, double pop) {
         this.dt = dt;
         this.temp = temp;
         this.weather = weather;
@@ -26,11 +26,11 @@ public class Hourly {
         this.dt = dt;
     }
 
-    public double getTemp() {
+    public int getTemp() {
         return temp;
     }
 
-    public void setTemp(double temp) {
+    public void setTemp(int temp) {
         this.temp = temp;
     }
 
