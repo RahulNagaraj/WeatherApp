@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Adapter adapter;
     private String unit;
+    private Weather weather;
 
 
     private TextView location;
@@ -65,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
         initializeAllFields();
 
         recyclerView = findViewById(R.id.hourlyTemp);
-        adapter = new Adapter(hourlyList, this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         WeatherAPI weatherAPI = new WeatherAPI(this, unit);
         new Thread(weatherAPI).start();
@@ -141,8 +139,14 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void updateData(Weather weatherData) {
+        weather = weatherData;
         if (weatherData != null) {
             setWeatherData(weatherData);
+
+            adapter = new Adapter(hourlyList, this, unit, weatherData);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
             setRecyclerViewData(weatherData.getHourly());
         }
     }

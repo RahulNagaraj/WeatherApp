@@ -1,26 +1,37 @@
 package com.example.weatherapp;
 
+import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
     private final List<Hourly> hourlyList;
-    private final MainActivity mainActivity;
+    private MainActivity mainAct;
+    private String unit;
+    private Weather weather;
 
-    public Adapter(List<Hourly> hourlyList, MainActivity mainActivity) {
+    public Adapter(List<Hourly> hourlyList, MainActivity mainActivity, String unit, Weather weather) {
         this.hourlyList = hourlyList;
-        this.mainActivity = mainActivity;
+        mainAct = mainActivity;
+        this.unit = unit;
+        this.weather = weather;
     }
 
     @NonNull
@@ -32,19 +43,39 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
         return new MyViewHolder(itemView);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Hourly hourly = hourlyList.get(position);
 
         String pattern = "HH:MM a";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String timePattern = "EEEE";
+
+        LocalDateTime ldt =
+                LocalDateTime.ofEpochSecond(hourly.getDt() + weather.getTimezoneOffset(), 0, ZoneOffset.UTC);
+        DateTimeFormatter dtf =
+                DateTimeFormatter.ofPattern(pattern, Locale.getDefault());
+
+        DateTimeFormatter tf =
+                DateTimeFormatter.ofPattern(timePattern, Locale.getDefault());
+
+
+        /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String time = simpleDateFormat.format(hourly.dt);
 
-        holder.day.setText("Today");
-        holder.time.setText(time);
-        holder.temperature.setText("" + hourly.getTemp());
+        SimpleDateFormat sdf = new SimpleDateFormat(timePattern);
+        String day = sdf.format(hourly.dt);*/
 
-        setImage(holder, hourly);
+        holder.day.setText(ldt.format(tf));
+        holder.time.setText(ldt.format(dtf));
+        holder.temperature.setText(String.format("%s%s", hourly.getTemp(), formatUnit()));
+
+
+        String iconCode = "_" + hourly.getWeather().get(0).getIcon();
+        int iconResId = mainAct.getResources().getIdentifier(iconCode,
+                "drawable",
+                mainAct.getPackageName());
+        holder.imageView.setImageResource(iconResId);
 
         holder.clouds.setText(formatClouds(hourly.getWeather().get(0).getDescription()));
     }
@@ -106,5 +137,9 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
                         .substring(1)
                         .toLowerCase())
                 .collect(Collectors.joining(WORD_SEPARATOR));
+    }
+
+    private String formatUnit() {
+        return unit.equals("metric") ? "°C" : "°F";
     }
 }
