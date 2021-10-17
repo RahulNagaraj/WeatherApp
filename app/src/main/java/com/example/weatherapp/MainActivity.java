@@ -5,7 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -32,9 +34,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private MenuItem f;
     private final List<Hourly> hourlyList = new ArrayList<>();
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private Adapter adapter;
     private String unit;
-    private ActivityResultLauncher<Intent> activityResultLauncher;
     private Weather weather = new Weather();
 
 
@@ -52,10 +54,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private TextView noon;
     private TextView evening;
     private TextView night;
-    /*private TextView dayTime;
+    private TextView dayTime;
     private TextView noonTime;
     private TextView eveningTime;
-    private TextView nightTime;*/
+    private TextView nightTime;
     private TextView sunrise;
     private TextView sunset;
     private ImageView weatherIcon;
@@ -68,12 +70,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         initializeAllFields();
 
         recyclerView = findViewById(R.id.hourlyTemp);
-        activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                null);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         WeatherAPI weatherAPI = new WeatherAPI(this, unit);
         new Thread(weatherAPI).start();
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     private void initializeAllFields() {
@@ -91,10 +93,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         noon = findViewById(R.id.noon);
         evening = findViewById(R.id.evening);
         night = findViewById(R.id.night);
-        /*dayTime = findViewById(R.id.dayTime);
+        dayTime = findViewById(R.id.dayTime);
         noonTime = findViewById(R.id.noonTime);
         eveningTime = findViewById(R.id.eveningTime);
-        nightTime = findViewById(R.id.nightTime);*/
+        nightTime = findViewById(R.id.nightTime);
         sunrise = findViewById(R.id.sunrise);
         sunset = findViewById(R.id.sunset);
         weatherIcon = findViewById(R.id.weatherIcon);
@@ -162,8 +164,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         if (weatherData != null) {
             setWeatherData(weatherData);
 
-            //Log.d("TAG", "updateData: " + weatherData.toString());
-
            weather = weatherData;
 
             adapter = new Adapter(hourlyList, this, unit, weatherData);
@@ -171,6 +171,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
             setRecyclerViewData(weatherData.getHourly());
+
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -219,6 +221,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         evening.setText(String.format("%s%s", daily.getTemp().getEve(), weatherData.formatUnit(unit)));
         night.setText(String.format("%s%s", daily.getTemp().getNight(), weatherData.formatUnit(unit)));
         weatherIcon.setImageResource(iconResId);
+
+        dayTime.setText(String.format("%s", "8am"));
+        noonTime.setText(String.format("%s", "1pm"));
+        eveningTime.setText(String.format("%s", "5pm"));
+        nightTime.setText(String.format("%s", "11pm"));
 
         sunrise.setText(String.format("Sunrise: %s", sunriseDt.format(sunrisetf)));
         sunset.setText(String.format("Sunset: %s", sunsetDt.format(sunrisetf)));
