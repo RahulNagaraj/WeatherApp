@@ -104,7 +104,7 @@ public class WeatherAPI implements Runnable {
             long timezoneOffset = jsonObject.getLong("timezone_offset");
             Current current = null;
             List<Hourly> hourly = new ArrayList<>();
-            List<Daily> daily = new ArrayList<>();
+            ArrayList<Daily> daily = new ArrayList<>();
 
             if (jsonObject.has("current")) {
                 JSONObject currentObj = jsonObject.getJSONObject("current");
@@ -204,7 +204,7 @@ public class WeatherAPI implements Runnable {
                         );
                     }
 
-                    Daily h = new Daily(
+                    Daily d = new Daily(
                             jo.getLong("dt"),
                             temperature,
                             dailyWeatherInfo,
@@ -212,7 +212,7 @@ public class WeatherAPI implements Runnable {
                             jo.getInt("uvi")
                     );
 
-                    daily.add(i, h);
+                    daily.add(i, d);
                 }
             }
 

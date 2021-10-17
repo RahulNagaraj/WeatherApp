@@ -1,6 +1,8 @@
 package com.example.weatherapp;
 
-public class Temperature {
+import java.io.Serializable;
+
+public class Temperature implements Serializable {
     int day;
     int min;
     int max;

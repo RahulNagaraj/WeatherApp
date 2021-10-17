@@ -1,6 +1,8 @@
 package com.example.weatherapp;
 
-public class WeatherInfo {
+import java.io.Serializable;
+
+public class WeatherInfo implements Serializable {
     int id;
     String main;
     String description;

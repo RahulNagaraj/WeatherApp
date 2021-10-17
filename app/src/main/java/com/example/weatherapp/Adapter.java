@@ -1,22 +1,18 @@
 package com.example.weatherapp;
 
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -38,7 +34,7 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_hourly_weather, parent, false);
+                .inflate(R.layout.hourly_card, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -68,7 +64,7 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
 
         holder.day.setText(ldt.format(tf));
         holder.time.setText(ldt.format(dtf));
-        holder.temperature.setText(String.format("%s%s", hourly.getTemp(), formatUnit()));
+        holder.temperature.setText(String.format("%s%s", hourly.getTemp(), weather.formatUnit(unit)));
 
 
         String iconCode = "_" + hourly.getWeather().get(0).getIcon();
@@ -77,7 +73,7 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
                 mainAct.getPackageName());
         holder.imageView.setImageResource(iconResId);
 
-        holder.clouds.setText(formatClouds(hourly.getWeather().get(0).getDescription()));
+        holder.clouds.setText(weather.formatClouds(hourly.getWeather().get(0).getDescription()));
     }
 
     @Override
@@ -121,25 +117,5 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
             holder.imageView.setImageResource(R.drawable._50d);
         else if (icon.equals("50n"))
             holder.imageView.setImageResource(R.drawable._50n);
-    }
-
-    private String formatClouds(String text) {
-        String WORD_SEPARATOR = " ";
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-
-        return Arrays
-                .stream(text.split(WORD_SEPARATOR))
-                .map(word -> word.isEmpty()
-                        ? word
-                        : Character.toTitleCase(word.charAt(0)) + word
-                        .substring(1)
-                        .toLowerCase())
-                .collect(Collectors.joining(WORD_SEPARATOR));
-    }
-
-    private String formatUnit() {
-        return unit.equals("metric") ? "°C" : "°F";
     }
 }

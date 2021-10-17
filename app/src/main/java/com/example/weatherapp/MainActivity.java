@@ -1,5 +1,6 @@
 package com.example.weatherapp;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,12 +8,15 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Serializable {
 
     private MenuItem c;
     private MenuItem f;
@@ -30,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Adapter adapter;
     private String unit;
-    private Weather weather;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private Weather weather = new Weather();
 
 
     private TextView location;
@@ -55,9 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView sunset;
     private ImageView weatherIcon;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         initializeAllFields();
 
         recyclerView = findViewById(R.id.hourlyTemp);
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                null);
 
         WeatherAPI weatherAPI = new WeatherAPI(this, unit);
         new Thread(weatherAPI).start();
@@ -133,15 +138,33 @@ public class MainActivity extends AppCompatActivity {
             new Thread(weatherAPI).start();
 
             return true;
+        } else {
+            Intent intent = new Intent(this, DailyActivity.class);
+
+            intent.putExtra("weather", new Weather(
+                    weather.getLat(),
+                    weather.getLon(),
+                    weather.getTimezone(),
+                    weather.getTimezoneOffset(),
+                    weather.getCurrent(),
+                    weather.getHourly(),
+                    weather.getDaily()
+            ));
+            intent.putExtra("unit", unit);
+            startActivity(intent);
+
+            return true;
         }
-        return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void updateData(Weather weatherData) {
-        weather = weatherData;
         if (weatherData != null) {
             setWeatherData(weatherData);
+
+            //Log.d("TAG", "updateData: " + weatherData.toString());
+
+           weather = weatherData;
 
             adapter = new Adapter(hourlyList, this, unit, weatherData);
             recyclerView.setAdapter(adapter);
@@ -184,17 +207,17 @@ public class MainActivity extends AppCompatActivity {
 
         location.setText(weatherData.getTimezone());
         dateTime.setText(ldt.format(dtf));
-        temperature.setText(String.format("%s%s", current.temp, formatUnit()));
-        description.setText(String.format("Feels like %s%s", current.feelsLike, formatUnit()));
-        clouds.setText(String.format("%s (%s Clouds)", formatClouds(current.getWeather().get(0).getDescription()), current.getClouds() +"%"));
+        temperature.setText(String.format("%s%s", current.temp, weatherData.formatUnit(unit)));
+        description.setText(String.format("Feels like %s%s", current.feelsLike, weatherData.formatUnit(unit)));
+        clouds.setText(String.format("%s (%s Clouds)", weatherData.formatClouds(current.getWeather().get(0).getDescription()), current.getClouds() +"%"));
         winds.setText(String.format("Winds: %s at %s%s", getDirection(current.getWindDeg()), current.getWindSpeed(), formatWindSpeed()));
         humidity.setText(String.format("Humidity: %s%%", current.humidity));
         uvi.setText(String.format("UV Index: %s", current.getUvi()));
         visibility.setText(String.format("Visibility: %s", current.getVisibility()));
-        day.setText(String.format("%s%s", daily.getTemp().getMorn(), formatUnit()));
-        noon.setText(String.format("%s%s", daily.getTemp().getDay(), formatUnit()));
-        evening.setText(String.format("%s%s", daily.getTemp().getEve(), formatUnit()));
-        night.setText(String.format("%s%s", daily.getTemp().getNight(), formatUnit()));
+        day.setText(String.format("%s%s", daily.getTemp().getMorn(), weatherData.formatUnit(unit)));
+        noon.setText(String.format("%s%s", daily.getTemp().getDay(), weatherData.formatUnit(unit)));
+        evening.setText(String.format("%s%s", daily.getTemp().getEve(), weatherData.formatUnit(unit)));
+        night.setText(String.format("%s%s", daily.getTemp().getNight(), weatherData.formatUnit(unit)));
         weatherIcon.setImageResource(iconResId);
 
         sunrise.setText(String.format("Sunrise: %s", sunriseDt.format(sunrisetf)));
@@ -226,27 +249,7 @@ public class MainActivity extends AppCompatActivity {
         return "X"; // We'll use 'X' as the default if we get a bad value
     }
 
-    private String formatUnit() {
-        return unit.equals("metric") ? "°C" : "°F";
-    }
-
     private String formatWindSpeed() {
         return unit.equals("metric") ? "kmph" : "mph";
-    }
-
-    private String formatClouds(String text) {
-        String WORD_SEPARATOR = " ";
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-
-        return Arrays
-                .stream(text.split(WORD_SEPARATOR))
-                .map(word -> word.isEmpty()
-                        ? word
-                        : Character.toTitleCase(word.charAt(0)) + word
-                        .substring(1)
-                        .toLowerCase())
-                .collect(Collectors.joining(WORD_SEPARATOR));
     }
 }

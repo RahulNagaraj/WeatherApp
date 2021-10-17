@@ -1,8 +1,9 @@
 package com.example.weatherapp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Current {
+public class Current implements Serializable {
     long dt;
     long sunrise;
     long sunset;

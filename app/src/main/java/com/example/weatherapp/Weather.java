@@ -1,8 +1,12 @@
 package com.example.weatherapp;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class Weather {
+public class Weather implements Serializable {
     double lat;
     double lon;
     String timezone;
@@ -11,8 +15,7 @@ public class Weather {
     List<Hourly> hourly;
     List<Daily> daily;
 
-    public Weather() {
-    }
+    public Weather() {}
 
     public Weather(double lat, double lon, String timezone, long timezoneOffset, Current current, List<Hourly> hourly, List<Daily> daily) {
         this.lat = lat;
@@ -78,6 +81,26 @@ public class Weather {
 
     public void setDaily(List<Daily> daily) {
         this.daily = daily;
+    }
+
+    public String formatUnit(String unit) {
+        return unit.equals("metric") ? "°C" : "°F";
+    }
+
+    public String formatClouds(String text) {
+        String WORD_SEPARATOR = " ";
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        return Arrays
+                .stream(text.split(WORD_SEPARATOR))
+                .map(word -> word.isEmpty()
+                        ? word
+                        : Character.toTitleCase(word.charAt(0)) + word
+                        .substring(1)
+                        .toLowerCase())
+                .collect(Collectors.joining(WORD_SEPARATOR));
     }
 
     @Override

@@ -25,7 +25,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
 
     public MyViewHolder(View view) {
         super(view);
-        day = view.findViewById(R.id.day);
+        day = view.findViewById(R.id.hourlyDay);
         time = view.findViewById(R.id.time);
         imageView = view.findViewById(R.id.cloudsImage);
         temperature = view.findViewById(R.id.temperature);

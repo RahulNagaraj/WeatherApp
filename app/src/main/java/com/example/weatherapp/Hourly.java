@@ -1,8 +1,9 @@
 package com.example.weatherapp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Hourly {
+public class Hourly implements Serializable {
     long dt;
     int temp;
     List<WeatherInfo> weather;
