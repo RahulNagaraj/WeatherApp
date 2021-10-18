@@ -2,7 +2,9 @@ package com.example.weatherapp;
 
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private double[] latLon = new double[] {41.8675766, -87.616232};
     private String locale = "";
     private SwipeRefreshLayout swiper;
+    private SharedPreferences.Editor editor;
+    SharedPreferences sharedPref;
 
 
     private TextView location;
@@ -82,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView sunset;
     private ImageView weatherIcon;
 
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +97,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         recyclerView = findViewById(R.id.hourlyTemp);
         progressBar = findViewById(R.id.progressBar);
-        swiper = findViewById(R.id.swiper);
 
+        swiper = findViewById(R.id.swiper);
         swiper.setOnRefreshListener(this::onRefresh);
+
+        sharedPref = getPreferences(Context.MODE_PRIVATE);
+        unit = sharedPref.getString("unit", "metric");
+        Log.d(TAG, "onCreate: " + unit);
 
         getLatestData();
 
@@ -124,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sunrise = findViewById(R.id.sunrise);
         sunset = findViewById(R.id.sunset);
         weatherIcon = findViewById(R.id.weatherIcon);
-
-        unit = "metric";
     }
 
     @Override
@@ -151,6 +159,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             f.setVisible(true);
             unit = "metric";
 
+            editor = sharedPref.edit();
+            if (!sharedPref.contains("unit")) {
+                editor.putString("unit", unit);
+                editor.apply();
+            }
+
+            Log.d(TAG, "onOptionsItemSelected: "  + sharedPref.getString("unit", null));
+
             getLatestData();
 
             /*progressBar.setVisibility(View.VISIBLE);
@@ -163,6 +179,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             item.setVisible(false);
             c.setVisible(true);
             unit = "imperial";
+
+            editor = sharedPref.edit();
+            if (!sharedPref.contains("unit")) {
+                editor.putString("unit", unit);
+                editor.apply();
+            }
+
+            Log.d(TAG, "onOptionsItemSelected: "  + sharedPref.getString("unit", null));
 
             getLatestData();
 
@@ -383,7 +407,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
             new Thread(weatherAPI).start();
         } else {
-            setContentView(R.layout.no_network);
+            location.setText("");
+            dateTime.setText(String.format("%s", "No network connection"));
+            temperature.setText("");
+            description.setText("");
+            clouds.setText("");
+            winds.setText("");
+            humidity.setText("");
+            uvi.setText("");
+            visibility.setText("");
+            day.setText("");
+            noon.setText("");
+            evening.setText("");
+            night.setText("");
+            weatherIcon.setImageResource(Integer.parseInt(""));
+            dayTime.setText("");
+            noonTime.setText("");
+            eveningTime.setText("");
+            nightTime.setText("");
+            sunrise.setText("");
+            sunset.setText("");
         }
     }
 
