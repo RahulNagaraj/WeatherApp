@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,10 +86,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         recyclerView = findViewById(R.id.hourlyTemp);
         progressBar = findViewById(R.id.progressBar);
 
-        progressBar.setVisibility(View.VISIBLE);
+        getLatestData();
 
+        /*progressBar.setVisibility(View.VISIBLE);
         WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
-        new Thread(weatherAPI).start();
+        new Thread(weatherAPI).start();*/
     }
 
     private void initializeAllFields() {
@@ -138,10 +142,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             f.setVisible(true);
             unit = "metric";
 
-            progressBar.setVisibility(View.VISIBLE);
+            getLatestData();
+
+            /*progressBar.setVisibility(View.VISIBLE);
 
             WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
-            new Thread(weatherAPI).start();
+            new Thread(weatherAPI).start();*/
 
             return true;
         } else if (item.getItemId() == R.id.unit_f) {
@@ -149,10 +155,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             c.setVisible(true);
             unit = "imperial";
 
-            progressBar.setVisibility(View.VISIBLE);
+            getLatestData();
+
+            /*progressBar.setVisibility(View.VISIBLE);
 
             WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
-            new Thread(weatherAPI).start();
+            new Thread(weatherAPI).start();*/
 
             return true;
         } else if (item.getItemId() == R.id.daily) {
@@ -326,12 +334,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
             // Multiply the 2 values together and display the results
             EditText et1 = view.findViewById(R.id.locationName);
-            double[] latlon = getLatLon(et1.getText().toString());
+            latLon = getLatLon(et1.getText().toString());
 
-            progressBar.setVisibility(View.VISIBLE);
-
-            WeatherAPI weatherAPI = new WeatherAPI(this, latlon, unit);
-            new Thread(weatherAPI).start();
+            getLatestData();
 
         });
         builder.setNegativeButton("CANCEL", (dialog, id) -> {
@@ -361,4 +366,31 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             return null;
         }
     }
+
+    private void getLatestData() {
+        if (hasNetworkConnection()) {
+            progressBar.setVisibility(View.VISIBLE);
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
+            new Thread(weatherAPI).start();
+        } else {
+            setContentView(R.layout.no_network);
+        }
+    }
+
+    private boolean hasNetworkConnection() {
+        ConnectivityManager connectivityManager = getSystemService(ConnectivityManager.class);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnectedOrConnecting());
+    }
+
+    public void tryAgain(View v) {
+        if (hasNetworkConnection()) {
+            setContentView(R.layout.activity_main);
+            getLatestData();
+        } else {
+            setContentView(R.layout.no_network);
+        }
+    }
+
 }
