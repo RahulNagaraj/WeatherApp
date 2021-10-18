@@ -96,9 +96,9 @@ public class WeatherAPI implements Runnable {
 
         final Weather weatherData = parseJSON(s);
         mainActivity.runOnUiThread(() -> {
-            if (weatherData != null)
-                Toast.makeText(mainActivity, "Loaded " + weatherData.getLat() + ", " + weatherData.getLon() + " - " + weatherData.getTimezone(), Toast.LENGTH_LONG).show();
-            mainActivity.updateData(weatherData);
+            if (weatherData != null) {
+                mainActivity.updateData(weatherData);
+            }
         });
     }
 

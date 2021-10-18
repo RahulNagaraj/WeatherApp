@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private Weather weather = new Weather();
     private double[] latLon = new double[] {41.8675766, -87.616232};
     private String locale = "";
+    private SwipeRefreshLayout swiper;
 
 
     private TextView location;
@@ -85,6 +87,16 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
         recyclerView = findViewById(R.id.hourlyTemp);
         progressBar = findViewById(R.id.progressBar);
+        swiper = findViewById(R.id.swiper);
+
+        swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLatestData();
+                swiper.setRefreshing(false); // This stops the busy-circle
+                Toast.makeText(MainActivity.this, "Loaded new data", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         getLatestData();
 
