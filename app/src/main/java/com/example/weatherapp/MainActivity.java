@@ -384,13 +384,4 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         return (networkInfo != null && networkInfo.isConnectedOrConnecting());
     }
 
-    public void tryAgain(View v) {
-        if (hasNetworkConnection()) {
-            setContentView(R.layout.activity_main);
-            getLatestData();
-        } else {
-            setContentView(R.layout.no_network);
-        }
-    }
-
 }
