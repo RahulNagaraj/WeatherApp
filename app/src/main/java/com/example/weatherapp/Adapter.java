@@ -36,6 +36,8 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.hourly_card, parent, false);
 
+        itemView.setOnClickListener(mainAct);
+
         return new MyViewHolder(itemView);
     }
 

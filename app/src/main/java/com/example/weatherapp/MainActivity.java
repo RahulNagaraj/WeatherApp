@@ -1,13 +1,16 @@
 package com.example.weatherapp;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,11 +40,12 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements Serializable {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
 
     private MenuItem c;
     private MenuItem f;
@@ -89,14 +93,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         progressBar = findViewById(R.id.progressBar);
         swiper = findViewById(R.id.swiper);
 
-        swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getLatestData();
-                swiper.setRefreshing(false); // This stops the busy-circle
-                Toast.makeText(MainActivity.this, "Loaded new data", Toast.LENGTH_SHORT).show();
-            }
-        });
+        swiper.setOnRefreshListener(this::onRefresh);
 
         getLatestData();
 
@@ -396,4 +393,23 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         return (networkInfo != null && networkInfo.isConnectedOrConnecting());
     }
 
+    private void onRefresh() {
+        getLatestData();
+        swiper.setRefreshing(false); // This stops the busy-circle
+        Toast.makeText(MainActivity.this, "Loaded new data", Toast.LENGTH_SHORT).show();
+    }
+
+    private void openCalendar() {
+        Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+        builder.appendPath("time");
+        ContentUris.appendId(builder, Calendar.getInstance().getTimeInMillis());
+        Intent intent = new Intent(Intent.ACTION_VIEW)
+                .setData(builder.build());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        openCalendar();
+    }
 }
