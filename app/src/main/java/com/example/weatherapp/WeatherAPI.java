@@ -1,5 +1,7 @@
 package com.example.weatherapp;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -22,6 +24,7 @@ import java.util.List;
 public class WeatherAPI implements Runnable {
 
     private MainActivity mainActivity;
+    private double[] latLon;
     private String unit;
     private final String KEY = "d8efe8af2f20910c27f0eac1561ea0f7";
 
@@ -31,10 +34,16 @@ public class WeatherAPI implements Runnable {
     public WeatherAPI() {
     }
 
-    public WeatherAPI(MainActivity mainActivity, String unit) {
+    //lat = 41.8675766
+    //lon = -87.616232
+
+    public WeatherAPI(MainActivity mainActivity, double[] latLon, String unit) {
         this.mainActivity = mainActivity;
+        this.latLon = new double[]{latLon[0], latLon[1]};
         this.unit = unit;
-        DATA_URL = "https://api.openweathermap.org/data/2.5/onecall?lat=41.8675766&lon=-87.616232&units="+ unit +"&lang=en&exclude=minutely&appid=" + KEY;
+        DATA_URL = "https://api.openweathermap.org/data/2.5/onecall?lat="+
+                latLon[0]+"&lon="+latLon[1]+
+                "&units="+ unit +"&lang=en&exclude=minutely&appid=" + KEY;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -233,4 +242,6 @@ public class WeatherAPI implements Runnable {
         }
         return null;
     }
+
+
 }

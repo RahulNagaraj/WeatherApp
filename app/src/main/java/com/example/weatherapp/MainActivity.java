@@ -1,23 +1,32 @@
 package com.example.weatherapp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -38,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private Adapter adapter;
     private String unit;
     private Weather weather = new Weather();
+    private double[] latLon = new double[] {41.8675766, -87.616232};
+    private String locale = "";
 
 
     private TextView location;
@@ -71,11 +82,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
         recyclerView = findViewById(R.id.hourlyTemp);
         progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
 
-        WeatherAPI weatherAPI = new WeatherAPI(this, unit);
-        new Thread(weatherAPI).start();
         progressBar.setVisibility(View.VISIBLE);
+
+        WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
+        new Thread(weatherAPI).start();
     }
 
     private void initializeAllFields() {
@@ -109,8 +120,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         c = menu.findItem(R.id.unit_c);
         f = menu.findItem(R.id.unit_f);
 
-        c.setVisible(true);
-        f.setVisible(false);
+        c.setVisible(false);
+        f.setVisible(true);
         return true;
     }
 
@@ -125,22 +136,26 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         if (item.getItemId() == R.id.unit_c) {
             item.setVisible(false);
             f.setVisible(true);
-            unit = "imperial";
+            unit = "metric";
 
-            WeatherAPI weatherAPI = new WeatherAPI(this, unit);
+            progressBar.setVisibility(View.VISIBLE);
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
             new Thread(weatherAPI).start();
 
             return true;
         } else if (item.getItemId() == R.id.unit_f) {
             item.setVisible(false);
             c.setVisible(true);
-            unit = "metric";
+            unit = "imperial";
 
-            WeatherAPI weatherAPI = new WeatherAPI(this, unit);
+            progressBar.setVisibility(View.VISIBLE);
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
             new Thread(weatherAPI).start();
 
             return true;
-        } else {
+        } else if (item.getItemId() == R.id.daily) {
             Intent intent = new Intent(this, DailyActivity.class);
 
             intent.putExtra("weather", new Weather(
@@ -153,8 +168,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                     weather.getDaily()
             ));
             intent.putExtra("unit", unit);
+            intent.putExtra("locale", locale);
             startActivity(intent);
 
+            return true;
+        } else {
+            openDialog();
             return true;
         }
     }
@@ -207,7 +226,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 "drawable",
                 getPackageName());
 
-        location.setText(weatherData.getTimezone());
+        String locale = getLocationName(weatherData.getLat(), weatherData.getLon());
+
+        location.setText(locale);
         dateTime.setText(ldt.format(dtf));
         temperature.setText(String.format("%s%s", current.temp, weatherData.formatUnit(unit)));
         description.setText(String.format("Feels like %s%s", current.feelsLike, weatherData.formatUnit(unit)));
@@ -258,5 +279,86 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
     private String formatWindSpeed() {
         return unit.equals("metric") ? "kmph" : "mph";
+    }
+
+    private String getLocationName(double lat, double lon) {
+        Geocoder geocoder = new Geocoder(this); // Here, “this” is an Activity
+        try {
+            List<Address> address =
+                    geocoder.getFromLocation(lat, lon, 1);
+            if (address == null || address.isEmpty()) {
+                // Nothing returned!
+                return null;
+            }
+            String country = address.get(0).getCountryCode();
+            String p1 = "";
+            String p2 = "";
+            if (country.equals("US")) {
+                p1 = address.get(0).getLocality();
+                p2 = address.get(0).getAdminArea();
+            } else {
+                p1 = address.get(0).getLocality();
+                if (p1 == null)
+                    p1 = address.get(0).getSubAdminArea();
+                p2 = address.get(0).getCountryName();
+            }
+            locale = p1 + ", " + p2;
+            return locale;
+        } catch (IOException e) {
+            // Failure to get an Address object
+            return null;
+        }
+    }
+
+    private void openDialog() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        final View view = inflater.inflate(R.layout.dialog, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("For US location, enter as 'City' or 'City, State' \n \n For international location, enter as 'City, Country' ");
+        builder.setTitle("Enter a location");
+
+        // Set the inflated view to be the builder's view
+        builder.setView(view);
+
+        builder.setPositiveButton("OK", (dialog, id) -> {
+
+            // Multiply the 2 values together and display the results
+            EditText et1 = view.findViewById(R.id.locationName);
+            double[] latlon = getLatLon(et1.getText().toString());
+
+            progressBar.setVisibility(View.VISIBLE);
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, latlon, unit);
+            new Thread(weatherAPI).start();
+
+        });
+        builder.setNegativeButton("CANCEL", (dialog, id) -> {
+            Toast.makeText(MainActivity.this, "You changed your mind!", Toast.LENGTH_SHORT).show();
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private double[] getLatLon(String userProvidedLocation) {
+        Geocoder geocoder = new Geocoder(this); // Here, “this” is an Activity
+        double lat, lon;
+        try {
+            List<Address> address =
+                    geocoder.getFromLocationName(userProvidedLocation, 1);
+            if (address == null || address.isEmpty()) {
+                // Nothing returned!
+                return null;
+            }
+            lat = address.get(0).getLatitude();
+            lon = address.get(0).getLongitude();
+
+            return new double[] {lat, lon};
+        } catch (IOException e) {
+            // Failure to get an Address object
+            return null;
+        }
     }
 }
