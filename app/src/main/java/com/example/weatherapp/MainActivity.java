@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (weatherData != null) {
             setWeatherData(weatherData);
 
-           weather = weatherData;
+            weather = weatherData;
 
             adapter = new Adapter(hourlyList, this, unit, weatherData);
             recyclerView.setAdapter(adapter);
@@ -220,12 +220,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setRecyclerViewData(weatherData.getHourly());
 
             progressBar.setVisibility(View.GONE);
+            swiper.setRefreshing(false);
         }
     }
 
     public void downloadFailed() {
         hourlyList.clear();
         adapter.notifyItemRangeChanged(0, hourlyList.size());
+        swiper.setRefreshing(false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -425,8 +427,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onRefresh() {
         getLatestData();
-        swiper.setRefreshing(false); // This stops the busy-circle
-        Toast.makeText(MainActivity.this, "Loaded new data", Toast.LENGTH_SHORT).show();
     }
 
     private void openCalendar() {
