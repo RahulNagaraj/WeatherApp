@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             noon.setText("");
             evening.setText("");
             night.setText("");
-            weatherIcon.setImageResource(Integer.parseInt(""));
+            //weatherIcon.setImageResource(Integer.parseInt(""));
             dayTime.setText("");
             noonTime.setText("");
             eveningTime.setText("");

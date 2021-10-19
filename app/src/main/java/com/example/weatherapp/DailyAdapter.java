@@ -42,7 +42,7 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull DailyViewHolder holder, int position) {
         Daily daily = dailyList.get(position);
-        String pattern = "HH:MM a";
+        String pattern = "EEEE, MM/dd";
 
         LocalDateTime ldt =
                 LocalDateTime.ofEpochSecond(daily.getDt() + weather.getTimezoneOffset(), 0, ZoneOffset.UTC);

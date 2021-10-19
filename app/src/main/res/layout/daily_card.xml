@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="6dp">
 
     <TextView
         android:id="@+id/dailyDay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="294dp"
+        android:background="@color/purple_500"
+        android:padding="6dp"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,11 +65,10 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginEnd="16dp"
-        android:contentDescription="TODO"
+        android:contentDescription="cloud"
         app:layout_constraintBottom_toBottomOf="@+id/uvIndex"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/highLow"
-        app:srcCompat="@drawable/_01d" />
+        app:layout_constraintTop_toTopOf="@+id/highLow" />
 
     <RadioGroup
         android:id="@+id/radioGroup"

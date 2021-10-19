@@ -57,13 +57,6 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
         DateTimeFormatter tf =
                 DateTimeFormatter.ofPattern(timePattern, Locale.getDefault());
 
-
-        /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String time = simpleDateFormat.format(hourly.dt);
-
-        SimpleDateFormat sdf = new SimpleDateFormat(timePattern);
-        String day = sdf.format(hourly.dt);*/
-
         holder.day.setText(ldt.format(tf));
         holder.time.setText(ldt.format(dtf));
         holder.temperature.setText(String.format("%s%s", hourly.getTemp(), weather.formatUnit(unit)));
