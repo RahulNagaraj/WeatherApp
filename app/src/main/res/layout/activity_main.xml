@@ -300,7 +300,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textSize="16sp"
-                android:textStyle="italic"
+                android:textStyle="bold|italic"
                 app:layout_constraintBottom_toTopOf="@+id/guideline3"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Sunrise: 6:46 AM" />
@@ -311,7 +311,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:textSize="16sp"
-                android:textStyle="italic"
+                android:textStyle="bold|italic"
                 app:layout_constraintBottom_toTopOf="@+id/guideline3"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="Sunset: 6:34 PM" />

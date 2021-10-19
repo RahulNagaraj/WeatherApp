@@ -102,14 +102,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         swiper.setOnRefreshListener(this::onRefresh);
 
         sharedPref = getPreferences(Context.MODE_PRIVATE);
-        unit = sharedPref.getString("unit", "metric");
-        Log.d(TAG, "onCreate: " + unit);
+        unit = sharedPref.getString(getString(R.string.unit_shared_prefs), getString(R.string.metric));
 
         getLatestData();
-
-        /*progressBar.setVisibility(View.VISIBLE);
-        WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
-        new Thread(weatherAPI).start();*/
     }
 
     private void initializeAllFields() {
@@ -141,8 +136,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         c = menu.findItem(R.id.unit_c);
         f = menu.findItem(R.id.unit_f);
 
-        c.setVisible(false);
-        f.setVisible(true);
+        if (unit.equals("metric")) {
+            c.setVisible(false);
+            f.setVisible(true);
+        } else {
+            c.setVisible(true);
+            f.setVisible(false);
+        }
+
         return true;
     }
 
@@ -157,43 +158,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (item.getItemId() == R.id.unit_c) {
             item.setVisible(false);
             f.setVisible(true);
-            unit = "metric";
+            unit = getString(R.string.metric);
 
             editor = sharedPref.edit();
-            if (!sharedPref.contains("unit")) {
-                editor.putString("unit", unit);
+            if (!sharedPref.contains(getString(R.string.unit_shared_prefs))) {
+                editor.putString(getString(R.string.unit_shared_prefs), unit);
                 editor.apply();
             }
 
-            Log.d(TAG, "onOptionsItemSelected: "  + sharedPref.getString("unit", null));
-
             getLatestData();
-
-            /*progressBar.setVisibility(View.VISIBLE);
-
-            WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
-            new Thread(weatherAPI).start();*/
 
             return true;
         } else if (item.getItemId() == R.id.unit_f) {
             item.setVisible(false);
             c.setVisible(true);
-            unit = "imperial";
+            unit = getString(R.string.imperial);
 
             editor = sharedPref.edit();
-            if (!sharedPref.contains("unit")) {
-                editor.putString("unit", unit);
+            if (!sharedPref.contains(getString(R.string.unit_shared_prefs))) {
+                editor.putString(getString(R.string.unit_shared_prefs), unit);
                 editor.apply();
             }
 
-            Log.d(TAG, "onOptionsItemSelected: "  + sharedPref.getString("unit", null));
-
             getLatestData();
-
-            /*progressBar.setVisibility(View.VISIBLE);
-
-            WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
-            new Thread(weatherAPI).start();*/
 
             return true;
         } else if (item.getItemId() == R.id.daily) {
@@ -208,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     weather.getHourly(),
                     weather.getDaily()
             ));
-            intent.putExtra("unit", unit);
+            intent.putExtra(getString(R.string.unit_shared_prefs), unit);
             intent.putExtra("locale", locale);
             startActivity(intent);
 
@@ -319,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private String formatWindSpeed() {
-        return unit.equals("metric") ? "kmph" : "mph";
+        return unit.equals(getString(R.string.metric)) ? "kmph" : "mph";
     }
 
     private String getLocationName(double lat, double lon) {
@@ -408,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new Thread(weatherAPI).start();
         } else {
             location.setText("");
-            dateTime.setText(String.format("%s", "No network connection"));
+            dateTime.setText(String.format("%s", getString(R.string.no_network_connection)));
             temperature.setText("");
             description.setText("");
             clouds.setText("");
