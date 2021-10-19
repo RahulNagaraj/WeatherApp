@@ -1,11 +1,8 @@
 package com.example.weatherapp;
 
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -30,28 +27,27 @@ public class WeatherAPI implements Runnable {
 
     private String DATA_URL;
     private static final String TAG = "WeatherAPI";
-
-    public WeatherAPI() {
-    }
-
-    //lat = 41.8675766
-    //lon = -87.616232
+    private static final String weatherURL = "https://api.openweathermap.org/data/2.5/onecall";
 
     public WeatherAPI(MainActivity mainActivity, double[] latLon, String unit) {
         this.mainActivity = mainActivity;
         this.latLon = new double[]{latLon[0], latLon[1]};
         this.unit = unit;
-        DATA_URL = "https://api.openweathermap.org/data/2.5/onecall?lat="+
+        /*DATA_URL = "https://api.openweathermap.org/data/2.5/onecall?lat="+
                 latLon[0]+"&lon="+latLon[1]+
-                "&units="+ unit +"&lang=en&exclude=minutely&appid=" + KEY;
+                "&units="+ unit +"&lang=en&exclude=minutely&appid=" + KEY;*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void run() {
-        Log.d(TAG, "run: URL " + DATA_URL);
-        Uri dataUri = Uri.parse(DATA_URL);
-        String urlToUse = dataUri.toString();
+        Uri.Builder buildURL = Uri.parse(weatherURL).buildUpon();
+        buildURL.appendQueryParameter("units", unit);
+        buildURL.appendQueryParameter("lat", String.format("%s", latLon[0]));
+        buildURL.appendQueryParameter("lon", String.format("%s", latLon[1]));
+        buildURL.appendQueryParameter("appid", KEY);
+
+        String urlToUse = buildURL.build().toString();
 
         StringBuilder sb = new StringBuilder();
         try {
