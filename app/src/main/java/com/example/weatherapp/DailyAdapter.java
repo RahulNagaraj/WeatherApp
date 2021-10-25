@@ -63,10 +63,10 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyViewHolder> {
         holder.precipitation.setText(String.format("Precipitation: %s", daily.getPop()));
         holder.uvIndex.setText(String.format("UV Index: %s", daily.getUvi()));
         holder.dailyCloudImage.setImageResource(iconResId);
-        holder.dailyMorning.setText(String.format("%s", daily.getTemp().getMorn()));
-        holder.dailyNoon.setText(String.format("%s", daily.getTemp().getDay()));
-        holder.dailyEvening.setText(String.format("%s", daily.getTemp().getEve()));
-        holder.dailyNight.setText(String.format("%s", daily.getTemp().getNight()));
+        holder.dailyMorning.setText(String.format("%s%s", daily.getTemp().getMorn(), weather.formatUnit(unit)));
+        holder.dailyNoon.setText(String.format("%s%s", daily.getTemp().getDay(), weather.formatUnit(unit)));
+        holder.dailyEvening.setText(String.format("%s%s", daily.getTemp().getEve(), weather.formatUnit(unit)));
+        holder.dailyNight.setText(String.format("%s%s", daily.getTemp().getNight(), weather.formatUnit(unit)));
 
     }
 

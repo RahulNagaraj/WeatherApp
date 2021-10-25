@@ -261,29 +261,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getPackageName());
 
         String locale = getLocationName(weatherData.getLat(), weatherData.getLon());
+        if (locale != null) {
+            location.setText(locale);
+            dateTime.setText(ldt.format(dtf));
+            temperature.setText(String.format("%s%s", current.temp, weatherData.formatUnit(unit)));
+            description.setText(String.format("Feels like %s%s", current.feelsLike, weatherData.formatUnit(unit)));
+            clouds.setText(String.format("%s (%s Clouds)", weatherData.formatClouds(current.getWeather().get(0).getDescription()), current.getClouds() +"%"));
+            winds.setText(String.format("Winds: %s at %s %s", getDirection(current.getWindDeg()), current.getWindSpeed(), formatWindSpeed()));
+            humidity.setText(String.format("Humidity: %s%%", current.humidity));
+            uvi.setText(String.format("UV Index: %s", current.getUvi()));
+            visibility.setText(String.format("Visibility: %s", weatherData.formatVisibility(current.getVisibility(), unit)));
+            day.setText(String.format("%s%s", daily.getTemp().getMorn(), weatherData.formatUnit(unit)));
+            noon.setText(String.format("%s%s", daily.getTemp().getDay(), weatherData.formatUnit(unit)));
+            evening.setText(String.format("%s%s", daily.getTemp().getEve(), weatherData.formatUnit(unit)));
+            night.setText(String.format("%s%s", daily.getTemp().getNight(), weatherData.formatUnit(unit)));
+            weatherIcon.setImageResource(iconResId);
 
-        location.setText(locale);
-        dateTime.setText(ldt.format(dtf));
-        temperature.setText(String.format("%s%s", current.temp, weatherData.formatUnit(unit)));
-        description.setText(String.format("Feels like %s%s", current.feelsLike, weatherData.formatUnit(unit)));
-        clouds.setText(String.format("%s (%s Clouds)", weatherData.formatClouds(current.getWeather().get(0).getDescription()), current.getClouds() +"%"));
-        winds.setText(String.format("Winds: %s at %s%s", getDirection(current.getWindDeg()), current.getWindSpeed(), formatWindSpeed()));
-        humidity.setText(String.format("Humidity: %s%%", current.humidity));
-        uvi.setText(String.format("UV Index: %s", current.getUvi()));
-        visibility.setText(String.format("Visibility: %s", current.getVisibility()));
-        day.setText(String.format("%s%s", daily.getTemp().getMorn(), weatherData.formatUnit(unit)));
-        noon.setText(String.format("%s%s", daily.getTemp().getDay(), weatherData.formatUnit(unit)));
-        evening.setText(String.format("%s%s", daily.getTemp().getEve(), weatherData.formatUnit(unit)));
-        night.setText(String.format("%s%s", daily.getTemp().getNight(), weatherData.formatUnit(unit)));
-        weatherIcon.setImageResource(iconResId);
+            dayTime.setText(String.format("%s", "8am"));
+            noonTime.setText(String.format("%s", "1pm"));
+            eveningTime.setText(String.format("%s", "5pm"));
+            nightTime.setText(String.format("%s", "11pm"));
 
-        dayTime.setText(String.format("%s", "8am"));
-        noonTime.setText(String.format("%s", "1pm"));
-        eveningTime.setText(String.format("%s", "5pm"));
-        nightTime.setText(String.format("%s", "11pm"));
-
-        sunrise.setText(String.format("Sunrise: %s", sunriseDt.format(sunrisetf)));
-        sunset.setText(String.format("Sunset: %s", sunsetDt.format(sunrisetf)));
+            sunrise.setText(String.format("Sunrise: %s", sunriseDt.format(sunrisetf)));
+            sunset.setText(String.format("Sunset: %s", sunsetDt.format(sunrisetf)));
+        } else {
+            Toast.makeText(this, "No such city/country exits", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setRecyclerViewData(List<Hourly> h) {
@@ -327,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String country = address.get(0).getCountryCode();
             String p1 = "";
             String p2 = "";
+            if (country == null) return null;
             if (country.equals("US")) {
                 p1 = address.get(0).getLocality();
                 p2 = address.get(0).getAdminArea();
@@ -340,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return locale;
         } catch (IOException e) {
             // Failure to get an Address object
+            Toast.makeText(this, "No such city/country exits", Toast.LENGTH_SHORT).show();
             return null;
         }
     }
@@ -420,13 +425,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             noon.setText("");
             evening.setText("");
             night.setText("");
-            //weatherIcon.setImageResource(Integer.parseInt(""));
+            weatherIcon.setImageDrawable(null);
             dayTime.setText("");
             noonTime.setText("");
             eveningTime.setText("");
             nightTime.setText("");
             sunrise.setText("");
             sunset.setText("");
+            hourlyList.clear();
+            adapter.notifyDataSetChanged();
         }
     }
 

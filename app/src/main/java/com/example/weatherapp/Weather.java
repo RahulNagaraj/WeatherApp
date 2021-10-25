@@ -107,6 +107,16 @@ public class Weather implements Serializable {
                 .collect(Collectors.joining(WORD_SEPARATOR));
     }
 
+    public String formatVisibility(long visibility, String unit) {
+        if (unit.equalsIgnoreCase("metric")) {
+            String vis = String.format("%.1f", visibility * 0.001);
+            return String.format("%s km", vis);
+        } else {
+            String vis = String.format("%.1f", visibility * 0.000621371);
+            return String.format("%s mi", vis);
+        }
+    }
+
     @Override
     public String toString() {
         return "Weather{" +
