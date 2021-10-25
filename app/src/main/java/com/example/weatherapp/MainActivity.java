@@ -103,8 +103,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         unit = sharedPref.getString(getString(R.string.unit_shared_prefs), getString(R.string.metric));
+    }
 
+    @Override
+    protected void onResume() {
         getLatestData();
+        super.onResume();
     }
 
     private void initializeAllFields() {
@@ -356,9 +360,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Multiply the 2 values together and display the results
             EditText et1 = view.findViewById(R.id.locationName);
-            latLon = getLatLon(et1.getText().toString());
+            double[] l = getLatLon(et1.getText().toString());
 
-            getLatestData();
+            if (l != null) {
+                latLon = l;
+                getLatestData();
+            } else {
+                Toast.makeText(this, "Invalid city/state", Toast.LENGTH_SHORT).show();
+            }
 
         });
         builder.setNegativeButton("CANCEL", (dialog, id) -> {
@@ -385,6 +394,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return new double[] {lat, lon};
         } catch (IOException e) {
             // Failure to get an Address object
+            Log.d(TAG, "getLatLon: " + e.getMessage());
+            Toast.makeText(this, "Invalid city/state", Toast.LENGTH_SHORT).show();
             return null;
         }
     }
