@@ -18,10 +18,12 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
-    private final List<Hourly> hourlyList;
+    private List<Hourly> hourlyList;
     private MainActivity mainAct;
     private String unit;
     private Weather weather;
+
+    public Adapter() {}
 
     public Adapter(List<Hourly> hourlyList, MainActivity mainActivity, String unit, Weather weather) {
         this.hourlyList = hourlyList;

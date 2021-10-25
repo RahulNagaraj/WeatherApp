@@ -433,7 +433,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sunrise.setText("");
             sunset.setText("");
             hourlyList.clear();
+            if (adapter == null) {
+                adapter = new Adapter(new ArrayList<>(), this, unit, null);
+            }
             adapter.notifyDataSetChanged();
+
+            progressBar.setVisibility(View.GONE);
         }
     }
 

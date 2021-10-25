@@ -251,7 +251,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.1"
                     android:textAlignment="center"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:text="8am" />
 
                 <TextView
                     android:id="@+id/noonTime"
