@@ -6,6 +6,8 @@
     <string name="API_KEY">d8efe8af2f20910c27f0eac1561ea0f7</string>
     <string name="no_network_connection">No Network Connection</string>
     <string name="unit_shared_prefs">unit</string>
+    <string name="lat_lon_shared_prefs">lat_lon</string>
+    <string name="locale_shared_prefs">locale</string>
     <string name="metric">metric</string>
     <string name="imperial">imperial</string>
 </resources>

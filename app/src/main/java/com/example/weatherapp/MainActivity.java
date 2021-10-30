@@ -38,6 +38,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -103,6 +104,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         unit = sharedPref.getString(getString(R.string.unit_shared_prefs), getString(R.string.metric));
+        /*if (sharedPref.contains(getString(R.string.unit_shared_prefs))) {
+            unit = sharedPref.getString(getString(R.string.unit_shared_prefs), "");
+        } else {
+            unit = sharedPref.getString(getString(R.string.unit_shared_prefs), getString(R.string.metric));
+        }*/
+
+        if (sharedPref.contains(getString(R.string.locale_shared_prefs))) {
+            locale = sharedPref.getString(getString(R.string.locale_shared_prefs), "");
+        } else {
+            locale = sharedPref.getString(getString(R.string.locale_shared_prefs), "Chicago, Illinois");
+        }
+
+        String l = sharedPref.getString(getString(R.string.lat_lon_shared_prefs), String.format("%s,%s", latLon[0], latLon[1]));
+        String[] arr = l.split(",");
+        latLon = new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
+        getLatestData();
+
+//        if (sharedPref.contains(getString(R.string.lat_lon_shared_prefs))) {
+//            String l = sharedPref.getString(getString(R.string.lat_lon_shared_prefs), "");
+//            String[] arr = l.split(",");
+//            latLon = new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
+//            getLatestData();
+//        } else {
+//            String l = sharedPref.getString(getString(R.string.lat_lon_shared_prefs), String.format("%s,%s", latLon[0], latLon[1]));
+//            String[] arr = l.split(",");
+//            latLon = new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
+//            getLatestData();
+//        }
     }
 
     @Override
@@ -141,11 +170,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         f = menu.findItem(R.id.unit_f);
 
         if (unit.equals("metric")) {
-            c.setVisible(false);
-            f.setVisible(true);
-        } else {
             c.setVisible(true);
             f.setVisible(false);
+        } else {
+            c.setVisible(false);
+            f.setVisible(true);
         }
 
         return true;
@@ -162,13 +191,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (item.getItemId() == R.id.unit_c) {
             item.setVisible(false);
             f.setVisible(true);
-            unit = getString(R.string.metric);
+            unit = getString(R.string.imperial);
 
             editor = sharedPref.edit();
-            if (!sharedPref.contains(getString(R.string.unit_shared_prefs))) {
-                editor.putString(getString(R.string.unit_shared_prefs), unit);
-                editor.apply();
-            }
+            editor.putString(getString(R.string.unit_shared_prefs), unit);
+            editor.apply();
 
             getLatestData();
 
@@ -176,13 +203,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (item.getItemId() == R.id.unit_f) {
             item.setVisible(false);
             c.setVisible(true);
-            unit = getString(R.string.imperial);
+            unit = getString(R.string.metric);
 
             editor = sharedPref.edit();
-            if (!sharedPref.contains(getString(R.string.unit_shared_prefs))) {
-                editor.putString(getString(R.string.unit_shared_prefs), unit);
-                editor.apply();
-            }
+            editor.putString(getString(R.string.unit_shared_prefs), unit);
+            editor.apply();
 
             getLatestData();
 
@@ -217,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             weather = weatherData;
 
-            adapter = new Adapter(hourlyList, this, unit, weatherData);
+            adapter = new Adapter(weatherData.getHourly(), this, unit, weatherData);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -261,6 +286,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getPackageName());
 
         String locale = getLocationName(weatherData.getLat(), weatherData.getLon());
+
+        editor = sharedPref.edit();
+        editor.putString(getString(R.string.locale_shared_prefs), locale);
+        editor.putString(getString(R.string.lat_lon_shared_prefs), String.format("%s,%s", weatherData.getLat(), weatherData.getLon()));
+        editor.apply();
+
         if (locale != null) {
             location.setText(locale);
             dateTime.setText(ldt.format(dtf));
@@ -344,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return locale;
         } catch (IOException e) {
             // Failure to get an Address object
+            Log.d(TAG, "getLocationName: " + e.getMessage());
             Toast.makeText(this, "No such city/country exits", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -365,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Multiply the 2 values together and display the results
             EditText et1 = view.findViewById(R.id.locationName);
-            double[] l = getLatLon(et1.getText().toString());
+            double[] l = getLatLon(et1.getText().toString().trim());
 
             if (l != null) {
                 latLon = l;
@@ -439,6 +471,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             adapter.notifyDataSetChanged();
 
             progressBar.setVisibility(View.GONE);
+
+            if (swiper.isRefreshing()) {
+                swiper.setRefreshing(false);
+            }
+            Toast.makeText(this, "No internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -452,17 +489,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getLatestData();
     }
 
-    private void openCalendar() {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void openCalendar(Hourly hour) {
         Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
         builder.appendPath("time");
-        ContentUris.appendId(builder, Calendar.getInstance().getTimeInMillis());
+        LocalDateTime ldt =
+                LocalDateTime.ofEpochSecond(hour.getDt() + weather.getTimezoneOffset(), 0, ZoneOffset.UTC);
+        ContentUris.appendId(builder, ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         Intent intent = new Intent(Intent.ACTION_VIEW)
                 .setData(builder.build());
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onClick(View view) {
-        openCalendar();
+        int index = recyclerView.getChildLayoutPosition(view);
+        openCalendar(hourlyList.get(index));
     }
 }

@@ -289,6 +289,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:background="@color/my_blue_light"
+                android:scrollIndicators="bottom"
                 app:layout_constraintBottom_toTopOf="@+id/sunrise"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
