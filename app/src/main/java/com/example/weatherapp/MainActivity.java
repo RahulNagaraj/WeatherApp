@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private String formatWindSpeed() {
-        return unit.equals(getString(R.string.metric)) ? "kmph" : "mph";
+        return unit.equals(getString(R.string.metric)) ? "m/s" : "mph";
     }
 
     private String formatWindGust(Current current) {
