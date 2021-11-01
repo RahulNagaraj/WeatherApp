@@ -172,27 +172,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.unit_c) {
-            item.setVisible(false);
-            f.setVisible(true);
-            unit = getString(R.string.imperial);
+            if (hasNetworkConnection()) {
+                progressBar.setVisibility(View.VISIBLE);
 
-            editor = sharedPref.edit();
-            editor.putString(getString(R.string.unit_shared_prefs), unit);
-            editor.apply();
+                item.setVisible(false);
+                f.setVisible(true);
+                unit = getString(R.string.imperial);
 
-            getLatestData();
+                editor = sharedPref.edit();
+                editor.putString(getString(R.string.unit_shared_prefs), unit);
+                editor.apply();
+
+                WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
+                new Thread(weatherAPI).start();
+            } else {
+                Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_SHORT).show();
+            }
 
             return true;
         } else if (item.getItemId() == R.id.unit_f) {
-            item.setVisible(false);
-            c.setVisible(true);
-            unit = getString(R.string.metric);
+            if (hasNetworkConnection()) {
+                progressBar.setVisibility(View.VISIBLE);
 
-            editor = sharedPref.edit();
-            editor.putString(getString(R.string.unit_shared_prefs), unit);
-            editor.apply();
+                item.setVisible(false);
+                c.setVisible(true);
+                unit = getString(R.string.metric);
 
-            getLatestData();
+                editor = sharedPref.edit();
+                editor.putString(getString(R.string.unit_shared_prefs), unit);
+                editor.apply();
+
+                WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
+                new Thread(weatherAPI).start();
+            } else {
+                Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_SHORT).show();
+            }
 
             return true;
         } else if (item.getItemId() == R.id.daily) {
@@ -499,7 +513,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void onRefresh() {
-        getLatestData();
+        if (hasNetworkConnection()) {
+            progressBar.setVisibility(View.VISIBLE);
+
+            WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
+            new Thread(weatherAPI).start();
+        } else {
+            swiper.setRefreshing(false);
+            Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

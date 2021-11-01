@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-class RainAndSnow {
+class RainAndSnow implements Serializable {
     private String time;
     private String value;
 
