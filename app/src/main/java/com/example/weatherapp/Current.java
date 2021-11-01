@@ -2,6 +2,35 @@ package com.example.weatherapp;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+
+class RainAndSnow {
+    private String time;
+    private String value;
+
+    RainAndSnow() {}
+
+    RainAndSnow(String time, String value) {
+        this.time = time;
+        this.value = value;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+}
 
 public class Current implements Serializable {
     long dt;
@@ -18,11 +47,13 @@ public class Current implements Serializable {
     double windSpeed;
     double windDeg;
     List<WeatherInfo> weather;
+    RainAndSnow rain;
+    RainAndSnow snow;
 
     public Current() {
     }
 
-    public Current(long dt, long sunrise, long sunset, int temp, int feelsLike, int pressure, int humidity, int dewPoint, int uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather) {
+    public Current(long dt, long sunrise, long sunset, int temp, int feelsLike, int pressure, int humidity, int dewPoint, int uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather, RainAndSnow rain, RainAndSnow snow) {
         this.dt = dt;
         this.sunrise = sunrise;
         this.sunset = sunset;
@@ -37,6 +68,8 @@ public class Current implements Serializable {
         this.windSpeed = windSpeed;
         this.windDeg = windDeg;
         this.weather = weather;
+        this.rain = rain;
+        this.snow = snow;
     }
 
     public long getDt() {
@@ -151,9 +184,25 @@ public class Current implements Serializable {
         this.weather = weather;
     }
 
+    public RainAndSnow getRain() {
+        return rain;
+    }
+
+    public void setRain(RainAndSnow rain) {
+        this.rain = rain;
+    }
+
+    public RainAndSnow getSnow() {
+        return snow;
+    }
+
+    public void setSnow(RainAndSnow snow) {
+        this.snow = snow;
+    }
+
     @Override
     public String toString() {
-        return "WeatherData{" +
+        return "Current{" +
                 "dt=" + dt +
                 ", sunrise=" + sunrise +
                 ", sunset=" + sunset +
@@ -168,6 +217,8 @@ public class Current implements Serializable {
                 ", windSpeed=" + windSpeed +
                 ", windDeg=" + windDeg +
                 ", weather=" + weather +
+                ", rain=" + rain +
+                ", snow=" + snow +
                 '}';
     }
 }

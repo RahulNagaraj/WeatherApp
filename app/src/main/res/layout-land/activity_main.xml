@@ -72,6 +72,7 @@
                 android:id="@+id/weatherIcon"
                 android:layout_width="100dp"
                 android:layout_height="90dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/sunset"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -94,10 +95,9 @@
                 android:id="@+id/clouds"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:textAlignment="textEnd"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/location"
@@ -108,9 +108,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
                 android:textAlignment="textStart"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/datetime"
@@ -134,11 +133,9 @@
                 android:id="@+id/humidity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:textAlignment="textEnd"
                 android:textSize="14sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/clouds"
                 tools:text="Humidity: 51%" />
@@ -147,11 +144,9 @@
                 android:id="@+id/uvi"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:textAlignment="textEnd"
                 android:textSize="14sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/humidity"
                 tools:text="UV Index: 2" />
@@ -161,9 +156,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
                 android:textSize="14sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/winds"
                 tools:text="Snow: 70mm" />
@@ -173,10 +166,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
                 android:textAlignment="textStart"
                 android:textSize="14sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/snow"
                 tools:text="Visibility: 6.2mi" />
@@ -186,7 +177,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="2dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -199,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="66°C" />
 
@@ -209,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="72°C" />
 
@@ -219,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="71°C" />
 
@@ -229,7 +219,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="68°C" />
             </RadioGroup>
@@ -250,7 +240,7 @@
                     android:id="@+id/dayTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.1"
+                    android:layout_weight="1"
                     android:textAlignment="center"
                     android:textSize="16sp" />
 
@@ -258,7 +248,7 @@
                     android:id="@+id/noonTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.1"
+                    android:layout_weight="1"
                     android:textAlignment="center"
                     android:textSize="16sp"
                     tools:text="1pm" />
@@ -267,7 +257,7 @@
                     android:id="@+id/eveningTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.1"
+                    android:layout_weight="1"
                     android:textAlignment="center"
                     android:textSize="16sp"
                     tools:text="5pm" />
@@ -299,11 +289,11 @@
                 android:id="@+id/sunrise"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:textAlignment="textEnd"
                 android:textSize="16sp"
-                android:textStyle="bold|italic"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/uvi"
                 tools:text="Sunrise: 6:46 AM" />
@@ -313,10 +303,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:textAlignment="textStart"
                 android:textSize="16sp"
-                android:textStyle="bold|italic"
+                android:textStyle="italic"
                 app:layout_constraintStart_toStartOf="@+id/guideline5"
                 app:layout_constraintTop_toBottomOf="@+id/visibility"
                 tools:text="Sunset: 6:34 PM" />
@@ -326,7 +316,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="341dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

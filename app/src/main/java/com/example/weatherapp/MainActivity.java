@@ -104,11 +104,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         unit = sharedPref.getString(getString(R.string.unit_shared_prefs), getString(R.string.metric));
-        /*if (sharedPref.contains(getString(R.string.unit_shared_prefs))) {
-            unit = sharedPref.getString(getString(R.string.unit_shared_prefs), "");
-        } else {
-            unit = sharedPref.getString(getString(R.string.unit_shared_prefs), getString(R.string.metric));
-        }*/
 
         if (sharedPref.contains(getString(R.string.locale_shared_prefs))) {
             locale = sharedPref.getString(getString(R.string.locale_shared_prefs), "");
@@ -120,18 +115,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String[] arr = l.split(",");
         latLon = new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
         getLatestData();
-
-//        if (sharedPref.contains(getString(R.string.lat_lon_shared_prefs))) {
-//            String l = sharedPref.getString(getString(R.string.lat_lon_shared_prefs), "");
-//            String[] arr = l.split(",");
-//            latLon = new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
-//            getLatestData();
-//        } else {
-//            String l = sharedPref.getString(getString(R.string.lat_lon_shared_prefs), String.format("%s,%s", latLon[0], latLon[1]));
-//            String[] arr = l.split(",");
-//            latLon = new double[]{Double.parseDouble(arr[0]), Double.parseDouble(arr[1])};
-//            getLatestData();
-//        }
     }
 
     @Override
@@ -213,24 +196,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             return true;
         } else if (item.getItemId() == R.id.daily) {
-            Intent intent = new Intent(this, DailyActivity.class);
+            if (hasNetworkConnection()) {
+                Intent intent = new Intent(this, DailyActivity.class);
 
-            intent.putExtra("weather", new Weather(
-                    weather.getLat(),
-                    weather.getLon(),
-                    weather.getTimezone(),
-                    weather.getTimezoneOffset(),
-                    weather.getCurrent(),
-                    weather.getHourly(),
-                    weather.getDaily()
-            ));
-            intent.putExtra(getString(R.string.unit_shared_prefs), unit);
-            intent.putExtra("locale", locale);
-            startActivity(intent);
+                intent.putExtra("weather", new Weather(
+                        weather.getLat(),
+                        weather.getLon(),
+                        weather.getTimezone(),
+                        weather.getTimezoneOffset(),
+                        weather.getCurrent(),
+                        weather.getHourly(),
+                        weather.getDaily()
+                ));
+                intent.putExtra(getString(R.string.unit_shared_prefs), unit);
+                intent.putExtra("locale", locale);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show();
+            }
 
             return true;
         } else {
-            openDialog();
+            if (hasNetworkConnection()) {
+                openDialog();
+            } else {
+                Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show();
+            }
+
             return true;
         }
     }
@@ -254,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void downloadFailed() {
+        weather = new Weather();
         hourlyList.clear();
         adapter.notifyItemRangeChanged(0, hourlyList.size());
         swiper.setRefreshing(false);
@@ -302,6 +295,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             humidity.setText(String.format("Humidity: %s%%", current.humidity));
             uvi.setText(String.format("UV Index: %s", current.getUvi()));
             visibility.setText(String.format("Visibility: %s", weatherData.formatVisibility(current.getVisibility(), unit)));
+
+            if (current.getRain() != null) {
+                snow.setText(String.format("%s", current.getRain()));
+            }
+            if (current.getSnow() != null) {
+                snow.setText(String.format("%s", current.getRain()));
+            }
+
+
             day.setText(String.format("%s%s", daily.getTemp().getMorn(), weatherData.formatUnit(unit)));
             noon.setText(String.format("%s%s", daily.getTemp().getDay(), weatherData.formatUnit(unit)));
             evening.setText(String.format("%s%s", daily.getTemp().getEve(), weatherData.formatUnit(unit)));
@@ -444,6 +446,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             WeatherAPI weatherAPI = new WeatherAPI(this, latLon, unit);
             new Thread(weatherAPI).start();
         } else {
+            weather = new Weather();
             location.setText("");
             dateTime.setText(String.format("%s", getString(R.string.no_network_connection)));
             temperature.setText("");
@@ -465,10 +468,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sunrise.setText("");
             sunset.setText("");
             hourlyList.clear();
-            if (adapter == null) {
-                adapter = new Adapter(new ArrayList<>(), this, unit, null);
+            if (weather != null && weather.getHourly() != null) {
+                weather.getHourly().clear();
             }
-            adapter.notifyDataSetChanged();
+
+            adapter = new Adapter(new ArrayList<>(), this, unit, null);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
             progressBar.setVisibility(View.GONE);
 

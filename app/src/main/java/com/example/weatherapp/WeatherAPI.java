@@ -116,6 +116,8 @@ public class WeatherAPI implements Runnable {
                 JSONArray currentWeatherJsonArray = currentObj.getJSONArray("weather");
 
                 List<WeatherInfo> currentWeatherInfo = new ArrayList<>();
+                RainAndSnow rain = null;
+                RainAndSnow snow = null;
                 if (currentWeatherJsonArray.length() > 0) {
                     JSONObject currentWeather = currentWeatherJsonArray.getJSONObject(0);
                     WeatherInfo weatherInfo = new WeatherInfo(
@@ -125,6 +127,18 @@ public class WeatherAPI implements Runnable {
                             currentWeather.getString("icon")
                     );
                     currentWeatherInfo.add(weatherInfo);
+                }
+
+                if (currentObj.has("rain")) {
+                    JSONObject rainObj = currentObj.getJSONObject("rain");
+                    String rainValue = rainObj.getString("1h");
+                    rain = new RainAndSnow("1h", rainValue);
+                }
+
+                if (currentObj.has("snow")) {
+                    JSONObject snowObj = currentObj.getJSONObject("snow");
+                    String snowValue = snowObj.getString("1h");
+                    snow = new RainAndSnow("1h", snowValue);
                 }
 
                 current = new Current(
@@ -141,7 +155,9 @@ public class WeatherAPI implements Runnable {
                         currentObj.getLong("visibility"),
                         currentObj.getDouble("wind_speed"),
                         currentObj.getDouble("wind_deg"),
-                        currentWeatherInfo
+                        currentWeatherInfo,
+                        rain,
+                        snow
                 );
             }
 
