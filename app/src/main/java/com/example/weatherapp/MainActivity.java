@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("locale", locale);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_SHORT).show();
             }
 
             return true;
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (hasNetworkConnection()) {
                 openDialog();
             } else {
-                Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_SHORT).show();
             }
 
             return true;
@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sunrise.setText(String.format("Sunrise: %s", sunriseDt.format(sunrisetf)));
             sunset.setText(String.format("Sunset: %s", sunsetDt.format(sunrisetf)));
         } else {
-            Toast.makeText(this, "No such city/country exits", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_city), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             // Failure to get an Address object
             Log.d(TAG, "getLocationName: " + e.getMessage());
-            Toast.makeText(this, "No such city/country exits", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_city), Toast.LENGTH_SHORT).show();
             return null;
         }
     }
@@ -405,12 +405,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 latLon = l;
                 getLatestData();
             } else {
-                Toast.makeText(this, "Invalid city/state", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.invalid_city), Toast.LENGTH_SHORT).show();
             }
 
         });
         builder.setNegativeButton("CANCEL", (dialog, id) -> {
-            Toast.makeText(MainActivity.this, "You changed your mind!", Toast.LENGTH_SHORT).show();
         });
 
         AlertDialog dialog = builder.create();
@@ -434,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             // Failure to get an Address object
             Log.d(TAG, "getLatLon: " + e.getMessage());
-            Toast.makeText(this, "Invalid city/state", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_city), Toast.LENGTH_SHORT).show();
             return null;
         }
     }
@@ -481,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (swiper.isRefreshing()) {
                 swiper.setRefreshing(false);
             }
-            Toast.makeText(this, "No internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_SHORT).show();
         }
     }
 

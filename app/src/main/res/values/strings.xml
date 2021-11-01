@@ -10,4 +10,5 @@
     <string name="locale_shared_prefs">locale</string>
     <string name="metric">metric</string>
     <string name="imperial">imperial</string>
+    <string name="invalid_city">Invalid City/State</string>
 </resources>
