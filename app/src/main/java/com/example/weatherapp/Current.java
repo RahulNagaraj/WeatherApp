@@ -46,6 +46,7 @@ public class Current implements Serializable {
     long visibility;
     double windSpeed;
     double windDeg;
+    Double windGust;
     List<WeatherInfo> weather;
     RainAndSnow rain;
     RainAndSnow snow;
@@ -53,7 +54,7 @@ public class Current implements Serializable {
     public Current() {
     }
 
-    public Current(long dt, long sunrise, long sunset, int temp, int feelsLike, int pressure, int humidity, int dewPoint, int uvi, int clouds, long visibility, double windSpeed, double windDeg, List<WeatherInfo> weather, RainAndSnow rain, RainAndSnow snow) {
+    public Current(long dt, long sunrise, long sunset, int temp, int feelsLike, int pressure, int humidity, int dewPoint, int uvi, int clouds, long visibility, double windSpeed, double windDeg, Double windGust, List<WeatherInfo> weather, RainAndSnow rain, RainAndSnow snow) {
         this.dt = dt;
         this.sunrise = sunrise;
         this.sunset = sunset;
@@ -67,6 +68,7 @@ public class Current implements Serializable {
         this.visibility = visibility;
         this.windSpeed = windSpeed;
         this.windDeg = windDeg;
+        this.windGust = windGust;
         this.weather = weather;
         this.rain = rain;
         this.snow = snow;
@@ -198,6 +200,14 @@ public class Current implements Serializable {
 
     public void setSnow(RainAndSnow snow) {
         this.snow = snow;
+    }
+
+    public Double getWindGust() {
+        return windGust;
+    }
+
+    public void setWindGust(Double windGust) {
+        this.windGust = windGust;
     }
 
     @Override

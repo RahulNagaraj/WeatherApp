@@ -291,18 +291,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temperature.setText(String.format("%s%s", current.temp, weatherData.formatUnit(unit)));
             description.setText(String.format("Feels like %s%s", current.feelsLike, weatherData.formatUnit(unit)));
             clouds.setText(String.format("%s (%s Clouds)", weatherData.formatClouds(current.getWeather().get(0).getDescription()), current.getClouds() +"%"));
-            winds.setText(String.format("Winds: %s at %s %s", getDirection(current.getWindDeg()), current.getWindSpeed(), formatWindSpeed()));
+            winds.setText(String.format("Winds: %s at %s %s %s", getDirection(current.getWindDeg()), current.getWindSpeed(), formatWindSpeed(), formatWindGust(current)));
             humidity.setText(String.format("Humidity: %s%%", current.humidity));
             uvi.setText(String.format("UV Index: %s", current.getUvi()));
             visibility.setText(String.format("Visibility: %s", weatherData.formatVisibility(current.getVisibility(), unit)));
 
             if (current.getRain() != null) {
-                snow.setText(String.format("%s", current.getRain()));
+                snow.setText(String.format("Rain: %smm", current.getRain().getValue()));
+            } else if (current.getSnow() != null) {
+                snow.setText(String.format("Snow: %smm", current.getSnow().getValue()));
+            } else {
+                snow.setText("");
             }
-            if (current.getSnow() != null) {
-                snow.setText(String.format("%s", current.getRain()));
-            }
-
 
             day.setText(String.format("%s%s", daily.getTemp().getMorn(), weatherData.formatUnit(unit)));
             noon.setText(String.format("%s%s", daily.getTemp().getDay(), weatherData.formatUnit(unit)));
@@ -349,6 +349,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String formatWindSpeed() {
         return unit.equals(getString(R.string.metric)) ? "kmph" : "mph";
+    }
+
+    private String formatWindGust(Current current) {
+        if (current.getWindGust() != null)
+            return String.format(". Gusting to %s %s", current.getWindGust(), formatWindSpeed());
+        else
+            return "";
     }
 
     private String getLocationName(double lat, double lon) {
@@ -466,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             nightTime.setText("");
             sunrise.setText("");
             sunset.setText("");
+            snow.setText("");
             hourlyList.clear();
             if (weather != null && weather.getHourly() != null) {
                 weather.getHourly().clear();
